@@ -23,7 +23,9 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { post } = Astro.props as Props;
 
 const url = getCanonical(getPermalink(post.permalink, 'post'));
-const image = (await findImage(post.image)) as ImageMetadata | string | undefined;
+const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/images/*.{jpeg,jpg,png,gif}');
+if (!images[post.image]) throw new Error(`"${post.image}" does not exist in glob: "src/assets/images/*.{jpeg,jpg,png,gif}"`);
+const image = (await images[post.image]())['default'] as ImageMetadata | string | undefined;
 
 const metadata = merge(
   {
@@ -35,7 +37,7 @@ const metadata = merge(
     },
     openGraph: {
       type: 'article',
-      ...(image ? { images: [{ url: image, width: (image as ImageMetadata)?.width, height: (image as ImageMetadata)?.height }] } : {}),
+      ...(image ? { images: [{ url: image, width: (image as ImageMetadata).width, height: (image as ImageMetadata).height }] } : {}),
     },
   },
   { ...(post?.metadata ? { ...post.metadata, canonical: post.metadata?.canonical || url } : {}) }

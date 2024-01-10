@@ -11,7 +11,7 @@ import compress from 'astro-compress';
 import icon from 'astro-icon';
 import tasks from './src/utils/tasks';
 
-import { readingTimeRemarkPlugin, responsiveTablesRehypePlugin } from './src/utils/frontmatter.mjs';
+import { responsiveTablesRehypePlugin } from './src/utils/frontmatter.mjs';
 
 import { ANALYTICS, SITE } from './src/utils/config.ts';
 
@@ -73,7 +73,6 @@ export default defineConfig({
   ],
 
   markdown: {
-    remarkPlugins: [readingTimeRemarkPlugin],
     rehypePlugins: [responsiveTablesRehypePlugin],
   },
 
