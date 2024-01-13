@@ -1,6 +1,7 @@
 ---
 import type { InferGetStaticPropsType, GetStaticPaths } from 'astro';
 import { blogCategoryRobots, getStaticPathsBlogCategory } from '~/utils/blog';
+import { getDisplayCategory } from '~/utils/categories';
 
 import Layout from '~/layouts/PageLayout.astro';
 import BlogList from '~/components/blog/List.astro';
@@ -27,14 +28,8 @@ const metadata = {
   },
 };
 
-const categoryDisplayNameMap = {
-  'cao': '草书',
-  'hang': '行书',
-  'kai': '楷书',
-  'li': '隶书',
-};
 
-const displayName = categoryDisplayNameMap[category] ?? category;
+const displayName = getDisplayCategory(category);
 ---
 
 <Layout metadata={metadata}>

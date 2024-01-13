@@ -2,14 +2,12 @@
 import type { InferGetStaticPropsType, GetStaticPaths } from 'astro';
 
 import merge from 'lodash.merge';
-import type { ImageMetadata } from 'astro';
 import Layout from '~/layouts/PageLayout.astro';
 import SinglePost from '~/components/blog/SinglePost.astro';
 import ToBlogLink from '~/components/blog/ToBlogLink.astro';
 
 import { getCanonical, getPermalink } from '~/utils/permalinks';
 import { getStaticPathsBlogPost, blogPostRobots } from '~/utils/blog';
-import { findImage } from '~/utils/images';
 import type { MetaData } from '~/types';
 
 export const prerender = true;
@@ -23,9 +21,9 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { post } = Astro.props as Props;
 
 const url = getCanonical(getPermalink(post.permalink, 'post'));
-const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/images/*.{jpeg,jpg,png,gif}');
-if (!images[post.image]) throw new Error(`"${post.image}" does not exist in glob: "src/assets/images/*.{jpeg,jpg,png,gif}"`);
-const image = (await images[post.image]())['default'] as ImageMetadata | string | undefined;
+// const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/images/*.{jpeg,jpg,png,gif}');
+// if (!images[post.image]) throw new Error(`"${post.image}" does not exist in glob: "src/assets/images/*.{jpeg,jpg,png,gif}"`);
+// const image = (await images[post.image]())['default'] as ImageMetadata | string | undefined;
 
 const metadata = merge(
   {
@@ -35,16 +33,12 @@ const metadata = merge(
       index: blogPostRobots?.index,
       follow: blogPostRobots?.follow,
     },
-    openGraph: {
-      type: 'article',
-      ...(image ? { images: [{ url: image, width: (image as ImageMetadata).width, height: (image as ImageMetadata).height }] } : {}),
-    },
   },
   { ...(post?.metadata ? { ...post.metadata, canonical: post.metadata?.canonical || url } : {}) }
 ) as MetaData;
 ---
 
 <Layout metadata={metadata}>
-  <SinglePost post={{ ...post, image: image }} url={url} />
+  <SinglePost post={{ ...post, image: post.image }} url={url} />
   <ToBlogLink />
 </Layout>
